@@ -1,4 +1,4 @@
-Project Two: Luck Game | Chris + Yeji
+Project Three: Luck Game | Chris + Yeji
 ----------------------
 
 ![alt text](https://github.com/yk1932/LuckGame/blob/main/documentationImages/3.png)
@@ -6,86 +6,59 @@ Project Two: Luck Game | Chris + Yeji
 
 ## Description + Inspiration
 
-Test-Your-Luck is a 4 player connected application game where users can play three rounds of chance games to compete which each other to see who is the luckiest out of the group 🍀. The main structure of the game was inspired by Jackbox Games where players enter a room code to access a game from their smartphones or tablets and play a set of mini games.
-
-![alt text](https://github.com/yk1932/LuckGame/blob/main/documentationImages/1.png)
-
+Test-Your-Luck is a 4 player connected application game where users can play three rounds of chance games to compete which each other to see who is the luckiest out of the group 🍀. The main structure of the game was inspired by Jackbox Games where players enter a room code to access a game from their smartphones or tablets and play a set of mini games. Project three was a continuation of project 2. Please refer to project two's documentation for description,inspiration, process, and design. This will largerly document the changes we made to project 2.
 
 * Link to gitch: [https://fire-shining-magnesium.glitch.me/](https://fire-shining-magnesium.glitch.me/)
 * Link to github repository: https://github.com/yk1932/LuckGame
-* Link to notion documentation: https://generated-smartphone-55e.notion.site/Project-Two-Documentation-0764310fa3f842d891bd0f97bed0ba00
 
-## Process
+## Improvements
 
-### Brainstorming
+In the previous project, we identified a few aspects that we wanted to work on. Additionally, after some user testing and feedback , we realized that the main aspect that needed work was the UI/UX. There were many components that were unclear and at some times users would lose track of their character. We also decided to introduce avatars for the users to make the game feel a bit more alive. In general, we touched up on how the game looked like and introduced elements such as music and animations to flesh out the game.
 
-When we were brainstorming the type of games we would want to implement, we were drawn to chance games such as rock, paper, scissors, poison chalice, crocodile game, as the outcome would always vary depending. We also wanted to make sure the game was playable by multiple players, greater than two, which contributed to our decision of using chance games.
+![alt text](https://github.com/yk1932/FinalLuckGame/blob/main/documentationImages/Screen%20Shot%202022-05-14%20at%2010.43.01%20PM.png)
 
-### Identifying Design Objectives
-
-We started with identifying the design objectives of the game.
-
-1. **Consistency in style**
-    
-    Since we had multiple levels and different objects contained in each one, it was important to us to have a consistent style throughout the levels. To achieve this, we made our own graphics using figma. We also made sure the fonts used were consistent. We used the font Joti One for all the titles and the color scheme used for each stage changed to visually communicate level change. But the dark tone of the color, used to create a castle-like atmosphere, stayed consistent throughout. 
-    
-
-1. **Cartoonish style**
-    
-    We were both a fan of more cartoonish, flat, simple graphics so we achieved this through keeping the objects flat and using pastel colors. 
-    
-
-2. **Minimal Text**
-    
-    If there is one thing we learnt from user testing, it was that users next want to read a large body of text when they are playing games. Keeping this in mind, we wanted to keep text at a minimum. Other than the title, buttons, and the game instructions, we removed any form of text while the game was running. Even for the level description, we introduced a timer to display one line of text at a time, instead of all of them at once, to make sure the user gave attention to each line of text. 
-    
-3. **Cool Colored Palette**
-    
-    The palette used for this website was at a cooler side as we were trying to create a medieval castle like atmosphere. In addition to the palette, the style of the doors (in the pointy arch), the chalice, and the rusted brick walls were used to further help develop this atmosphere.
-    
-4. **Highlighting interact-able objects**
-    
-    To achieve using minimal text, we made sure the interactions spoke for themselves. To achieve this, we highlighted the objects or changed the mouse cursor to pointer on hover to indicate a possible interaction.
-    
-### Wireframing
-
-With these design objectives in mind, we created a wireframe on Figma, along with all the visuals we would need for the game.
-
-![alt text](https://github.com/yk1932/LuckGame/blob/main/documentationImages/2.png)
-
-### Coding
-
-After the wireframe was completed, we identified the general workflow for the user. Ideally, a user would first create a room and other users would join. The names would all be randomly generated. Once four players have joined the room, the players can start the game. The rules to the game are simple and each user takes turn clicking on one of the objects presented on the screen until one player remains.  
-
-We first started with generating the rooms with sockets. Once a user creates a room from the home page, a signal is sent to the server with its randomly generated name and room code. This information is also stored in the session storage. Each time a new user joins the room, the server sends a signal to all clients, updating the players in the lobby. The server keeps track of how many user are connected in a particular room and which rooms are in use. Once the client presses start game, a signal is sent to the server and then the server sends a signal to all clients in that room. This signal redirects them to the game page. 
-
-One problem we realized is that upon leaving a page (going from lobby to game) users are disconnected from the lobby so we had to reconnect them to the correct room. This was done with the session storage that we saved earlier. On load, the game displays the level one text with the instructions. Afterwards, the server sends a signal to all clients to tell who’s turn it is. There was probably a more optimal way to do it, but what we did was that we had the server send a signal with the name of the current player and if it matched on the client side, it was his/her turn and other players were notified as well. When a user clicks on the shown item (for level one it was the door) the user’s name and guess were sent to the server. Upon receiving the guess, the server compares the guess to the randomly generated answer and sends a response. If it was a match, the server also updates the users object that we generated earlier and marking the player as dead. The signal includes the user’s name and whether or not he/she died. On the client side, if a player dies, all players are notified and the next game is started.  For all three games, similar logic is implemented. 
-
-To keep track of who’s turn it was, we used an array of players that was constructed when the user connected into the game page. Each time a user guessed, the a counter would increment and we’d mod it by the length of the array so that we do not get index out of bound errors. When a user dies, the user is removed from the list. 
-
-One thing we added for the door game was that there would be a reshuffling of the doors. In the first stage, we didn’t want the last player to die all the time (if all 3 players survive the 4th player is guaranteed to die). To resolve this, if the previous three players don’t die, the doors are reset allowing the 4th player to make a choice from any of the four doors and the game continues. This was done by keeping track of how many “safe” doors have been opened and reshuffling them when it occurred. 
-
-To ensure that users were unable to click a previously clicked door, we would add a class that removed point events whenever it was clicked. Additionally, we didn’t want users to be clicking when it was not their turn so we added the same class described above to all objects and that would only be removed when it was their turn.
-
-## Learnings / Challenges
-
-**Chris**
-
-There were quite a few challenges throughout this project. The first thing that pops to mind would be managing the sockets. We would have problems disconnecting users from the given socket and despite them leaving, they would still show up on the lobby. This would inadvertently just break the game. Another problem that we faced was actually implementing the join lobby functionality. In terms of coding the game, there are definitely parts which are suboptimal. For example, the code for the game logic was extremely repetitive. Additionally, we also created a socket signal for each game despite the games having similar code. One way to remedy this would be to change the data that was sent. This would include adding what the current game is and depending on what the data was, the items displayed/game logic would change accordingly. 
-
-I’ve had only a little exposure to sockets and I’ve learned a great deal from this project. Having the ability to connect with others is a pretty cool feature. 
-
-**Yeji**
-
-Considering the time limit of the project, we were faced with a lot of challenges. Familiarizing myself with sockets was the most challenging part. Not having had much experience with back end development, a lot of time was spent trying to understand the logic and flow of the backend code. Coding for a multi-level game (that runs on its own) was something new to code. Previously, most of the interactions relied on the user to click and be lead to a new scene. Since this game was continuous from the moment the users start the game, we had to use the timeout function to introduce some components on a timely manner. I think it took me the most time to create a basic mental map of the backend flow of the code. For the next project, I want to work more on consolidating my knowledge on sockets and also spending a lot time creating a solid framework within my mind prior to jumping into the code.
-
-## Moving Forward
 
 1. **Incorporation of Sound / Music**
-    
-    To improve the game, we want to add sound design. To do so, we would add medieval themed music and add a sound effect whenever an event happens. For example, when the user dies, there would be a dramatic sound effect, when the crocodile snaps it would create a large sound to add tension to the game. We could also incorporate a narrator, like in Jackbox, to read the level descriptions.
-    
-2. **Improved UI/UX**
-While playing the game, we realized that there were a few areas in which we could improve in the UI/UX department. For example, better highlighting who’s turn it was, the next player, and the players alive. This could include a text block on the top right that had an indicator on who it was currently. We designed it in our initial wireframe but due to time constraints we were unable to flesh it out. 
-3. **Mouse Movement**
-Currently, there isn’t much a user can do other than wait for his/her turn. Additionally, we can only see the result of other players. One addition could be that while other players are waiting, they can see the current players mouse movement.
+After playing the game for some time, we felt that the game was extremely flat. The gameplay would get repetitive and there was no real response from the game other than the outcome of your click. We decided that adding sound effects to each click would make each interaction more meaningful and we added a background music for the game.
+
+2.  **Animation**
+Similar to the music, we felt that that the response from the game was extremely static and "dead". Thus, we decided to utilize anime.js to create some animations when a user clicked on a door. Currently, we implemented an animation when the user clicks on the chalice. Not only does this make the game look more complete, it also adds a sense of suspense since we have to wait for the animation to finish before we see the result of our choices.
+
+3. **Improved UI/UX**
+This was the main focus for project three. Through user testing and feedback, we definitely felt that the game was at some times unclear. Thus, we decided to properly indicate the turns. This was done with introducing a character for each player in the form of a mokoko. Each player is a different colored mokoko. This was indicated in the lobby (where we completely changed the layout) and users would have a star on top of their character. When the game starts, the user's mokoko will be shown on their browser tab. In the game itself, we added two new components: players alive tab and player turn tab. As the name suggests, the players alive tab indicates who is still alive in the game. This is updated whenever a player dies. For the player turn tab, the current player's mokoko will be displayed. Additionally, the background color of the tab will change to red if it is your turn. Depending on whether the player lives or dies after their choice, the player's mokoko will either smile or cry. Lastly, we added a small recap after the game ends to indicate which player has died. We believe that these changes made it easier for players to follow. The mokokos were also quite popular with the users due to their overwhelming cuteness.
+
+![alt text](https://github.com/yk1932/FinalLuckGame/blob/main/documentationImages/Screen%20Shot%202022-05-14%20at%2010.45.02%20PM.png)
+
+![alt text](https://github.com/yk1932/FinalLuckGame/blob/main/documentationImages/Screen%20Shot%202022-05-14%20at%2010.45.37%20PM.png)
+
+![alt text](https://github.com/yk1932/FinalLuckGame/blob/main/documentationImages/Screen%20Shot%202022-05-14%20at%2010.45.55%20PM.png)
+
+4. **New Game**
+We also added a new game that had users guessing a number. The last person to correctly guess the number loses. In this game, the user who loses does not die. The reasoning behind is that in the previous iteration, a player could play one game and then do nothing else for the rest of the time. For that particular player, it would not be a pleasant experience as there is not much he/she can do. We thought that adding at least one game would allow for players to at least spend some more time actually engaging with the game itself.
+
+![alt text](https://github.com/yk1932/FinalLuckGame/blob/main/documentationImages/Screen%20Shot%202022-05-14%20at%2010.46.05%20PM.png)
+
+
+## Coding
+
+Since we were working on our pre-existing code, most of the changes utilized the structure that we had before. To keep track of each character's mokoko, we did have to alter the data sent by the sockets to ensure that the correct images were displayed. Most of the new code was adding the new components in the game, changing the lobby, the new game.
+
+## Learnings
+
+Chris:
+
+The main takeways for project 3 compared to project 2 is the additional need to pay attention to details. I felt that I really needed to care more about the user experience and take care of each interaction to ensure that users go through the intended process when they play our game. I had a lot of fun adding the characters along with integrating it into the game itself. The usage of sockets became much more familiar and I struggled much less here than I did in project 2.
+
+Yeji:
+
+The game logic for the new level was a bit different than the previous levels. Coding the most efficient winning condition was quite challenging and took some time to think through. We ended up using the the sidebar to determine the winning condition. When 3 of the Mokokos were filled in the sidebar, the losing screen was called. The name of the last mokoko, the non-filled slot of the sidebar, was called and the level ended. 
+
+## Next Steps
+
+There are a few things that we would want to add in the future. The first is a clearer indication for the user. Based off the presentation during class, it seemed like players still had some difficulty remembering which character they were or who's turn it was. Perhaps adding the player's mokoko on the side of the screen would help users. We really like the tab idea (mokoko on the tab) but it seems a bit too subtle for users to identify which mokoko they are.
+
+Another aspect we would like to fully flesh out would be the animations. Currently, we only have the chalice animation and we definitely feel like more animations would make the game more fun and interactive.
+
+One thing to consider is what can players who have died do. A way to approach this would be to allow users to display some emoticons after they die or have a cheering button. We think this could be a great addition so that users are not too bored after they die.
+
+Lastly, we believe that this game would flourish with a greater variety of games that are randomly generated each time a user plays. This creates greater unpredictiability and would make the gameplay more interesting, preventing it from getting too stale.
